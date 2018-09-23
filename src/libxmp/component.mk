@@ -1,0 +1,2 @@
+COMPONENT_ADD_INCLUDEDIRS = . loaders/
+COMPONENT_SRCDIRS := . loaders/

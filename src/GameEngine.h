@@ -9,6 +9,7 @@
 
 #include "BViewPort.h"
 #include "BBitmap.h"
+#include "Audio.h"
 #include "Display.h"
 #include "Controls.h"
 #include "BSprite.h"

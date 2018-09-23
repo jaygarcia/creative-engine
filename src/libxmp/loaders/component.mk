@@ -1,0 +1,1 @@
+#Empty component.mk file used for the ESP32-IDF
