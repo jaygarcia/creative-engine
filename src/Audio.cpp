@@ -8,18 +8,18 @@
 #define I2S_NUM (I2S_NUM_0)
 #define BUILTIN_DAC_ENABLED (1)
 
-float audio_volume = .062f; // half way
-bool audio_mute = false;
+TFloat audio_volume = .062f; // half way
+TBool audio_mute = false;
 TUint16 sample_rate;
 
 
-float Audio::GetVolume(){
+TFloat Audio::GetVolume(){
   return audio_volume;
 }
 
-void Audio::SetVolume(float value) {
+void Audio::SetVolume(TFloat value) {
   // printf("%s(%f)\n", __func__, value);
-  float newValue = audio_volume + value;
+  TFloat newValue = audio_volume + value;
   // printf("newValue = %f\n", newValue);
   if (newValue > .124f) {
     audio_volume = 0;
@@ -100,9 +100,9 @@ void Audio::Unmute() {
 }
 
 //Todo: @Jay - Review Mixdown method and decide if we're going to delete!
-void Audio::Mixdown(short *stereoAudioBuffer, int frameCount) {
+void Audio::Mixdown(TInt16 *stereoAudioBuffer, int frameCount) {
   // Convert for built in DAC
-  for (short i = 0; i < frameCount; i += 2){
+  for (TInt16 i = 0; i < frameCount; i += 2){
     int32_t dac0;
     int32_t dac1;
 
@@ -118,11 +118,11 @@ void Audio::Mixdown(short *stereoAudioBuffer, int frameCount) {
       sample >>= 1;
 
       // Normalize
-      const float sn = (float)sample / 0x8000;
+      const TFloat sn = (TFloat)sample / 0x8000;
 
       // Scale
       const int magnitude = 127 + 127;
-      const float range = magnitude  * sn * audio_volume;
+      const TFloat range = magnitude  * sn * audio_volume;
 
       // Convert to differential output
       if (range > 127) {
@@ -151,11 +151,11 @@ void Audio::Mixdown(short *stereoAudioBuffer, int frameCount) {
 
 }
 
-void Audio::Submit(short* stereoAudioBuffer, int frameCount) {
-  short currentAudioSampleCount = frameCount * 2;
+void Audio::Submit(TInt16* stereoAudioBuffer, int frameCount) {
+  TInt16 currentAudioSampleCount = frameCount * 2;
 
   // Convert for built in DAC
-  for (short i = 0; i < currentAudioSampleCount; i += 2){
+  for (TInt16 i = 0; i < currentAudioSampleCount; i += 2){
     int32_t dac0;
     int32_t dac1;
 
@@ -171,11 +171,11 @@ void Audio::Submit(short* stereoAudioBuffer, int frameCount) {
       sample >>= 1;
 
       // Normalize
-      const float sn = (float)sample / 0x8000;
+      const TFloat sn = (TFloat)sample / 0x8000;
 
       // Scale
       const int magnitude = 127 + 127;
-      const float range = magnitude  * sn * audio_volume;
+      const TFloat range = magnitude  * sn * audio_volume;
 
       // Convert to differential output
       if (range > 127) {
@@ -212,7 +212,7 @@ void Audio::Submit(short* stereoAudioBuffer, int frameCount) {
   }
 }
 
-int Audio::GetSampleRate() {
+TInt Audio::GetSampleRate() {
   return sample_rate;
 }
 
@@ -233,11 +233,11 @@ void Audio::Init(TUint16 new_sample_rate) {
 
 }
 
-void Audio::SetVolume(float value) {
+void Audio::SetVolume(TFloat value) {
 
 }
 //  void ChangeVolume();
-float Audio::GetVolume() {
+TFloat Audio::GetVolume() {
 
 }
 void Audio::Terminate() {
@@ -247,6 +247,7 @@ void Audio::Submit(TInt16 *stereoAudioBuffer, TInt frameCount) {
 
 }
 TInt Audio::GetSampleRate() {
+  return sample_rate;
 
 }
 void Audio::Mixdown(TInt16 *stereoAudioBuffer, TInt frameCount) {

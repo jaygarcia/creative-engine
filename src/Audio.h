@@ -22,17 +22,17 @@ class Audio {
 public:
   Audio();
   virtual ~Audio();
-   void Init(TUint16 new_sample_rate);
+  void Init(TUint16 new_sample_rate);
 
-   void SetVolume(float value);
+  void SetVolume(TFloat value);
   //  void ChangeVolume();
-   float GetVolume();
-   void Terminate();
-   void Submit(TInt16 *stereoAudioBuffer, TInt frameCount);
-   TInt GetSampleRate();
-   void Mixdown(TInt16 *stereoAudioBuffer, TInt frameCount);
-   void Mute();
-   void Unmute();
+  TFloat GetVolume();
+  void Terminate();
+  void Submit(TInt16 *stereoAudioBuffer, TInt frameCount);
+  TInt GetSampleRate();
+  void Mixdown(TInt16 *stereoAudioBuffer, TInt frameCount);
+  void Mute();
+  void Unmute();
 };
 
 
