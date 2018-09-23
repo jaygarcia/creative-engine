@@ -2,6 +2,7 @@
 #define AUDIO_H
 
 #include "BTypes.h"
+#include "BBase.h"
 
 
 #ifdef __XTENSA__
@@ -18,7 +19,7 @@
 #endif
 
 
-class Audio {
+class Audio : public BBase {
 public:
   Audio();
   virtual ~Audio();
@@ -30,9 +31,7 @@ public:
   void Terminate();
   void Submit(TInt16 *stereoAudioBuffer, TInt frameCount);
   TInt GetSampleRate();
-  void Mixdown(TInt16 *stereoAudioBuffer, TInt frameCount);
-  void Mute();
-  void Unmute();
+  void MuteMusic(TBool aMuted = ETrue);
 };
 
 

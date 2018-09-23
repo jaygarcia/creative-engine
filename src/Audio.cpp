@@ -1,5 +1,6 @@
 #include "Audio.h"
 
+Audio audio;
 
 /*** ODROID GO START *******/
 #ifdef __XTENSA__
@@ -32,6 +33,14 @@ void Audio::SetVolume(TFloat value) {
 }
 
 
+Audio::Audio() {
+  // Init?
+}
+
+Audio::~Audio() {
+  // Todo: @Jay SDL2 Audio destructor
+}
+
 
 void Audio::Init(TUint16 new_sample_rate) {
   sample_rate = new_sample_rate;
@@ -57,9 +66,6 @@ void Audio::Init(TUint16 new_sample_rate) {
   i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);
 }
 
-Audio::~Audio() {
-  //Todo:: @Jay Destructor
-}
 
 void Audio::Terminate() {
   i2s_zero_dma_buffer(I2S_NUM);
@@ -89,67 +95,6 @@ void Audio::Terminate() {
   }
 }
 
-void Audio::Mute() {
-  // printf("%s\n", __func__);
-  audio_mute = true;
-}
-
-void Audio::Unmute() {
-  // printf("%s\n", __func__);
-  audio_mute = false;
-}
-
-//Todo: @Jay - Review Mixdown method and decide if we're going to delete!
-void Audio::Mixdown(TInt16 *stereoAudioBuffer, int frameCount) {
-  // Convert for built in DAC
-  for (TInt16 i = 0; i < frameCount; i += 2){
-    int32_t dac0;
-    int32_t dac1;
-
-    if (audio_mute || audio_volume == 0.0f) {
-      // Disable amplifier
-      dac0 = 0;
-      dac1 = 0;
-    }
-    else {
-      // Down mix stero to mono
-      int32_t sample = stereoAudioBuffer[i];
-      sample += stereoAudioBuffer[i + 1];
-      sample >>= 1;
-
-      // Normalize
-      const TFloat sn = (TFloat)sample / 0x8000;
-
-      // Scale
-      const int magnitude = 127 + 127;
-      const TFloat range = magnitude  * sn * audio_volume;
-
-      // Convert to differential output
-      if (range > 127) {
-        dac1 = (range - 127);
-        dac0 = 127;
-      }
-      else if (range < -127) {
-        dac1  = (range + 127);
-        dac0 = -127;
-      }
-      else{
-        dac1 = 0;
-        dac0 = range;
-      }
-
-      dac0 += 0x80;
-      dac1 = 0x80 - dac1;
-
-      dac0 <<= 8;
-      dac1 <<= 8;
-    }
-
-    stereoAudioBuffer[i] = (int16_t)dac1;
-    stereoAudioBuffer[i + 1] = (int16_t)dac0;
-  }
-
-}
 
 void Audio::Submit(TInt16* stereoAudioBuffer, int frameCount) {
   TInt16 currentAudioSampleCount = frameCount * 2;
@@ -212,10 +157,6 @@ void Audio::Submit(TInt16* stereoAudioBuffer, int frameCount) {
   }
 }
 
-TInt Audio::GetSampleRate() {
-  return sample_rate;
-}
-
 
 /**** END ODROID GO ***/
 #else 
@@ -246,22 +187,18 @@ void Audio::Terminate() {
 void Audio::Submit(TInt16 *stereoAudioBuffer, TInt frameCount) {
 
 }
-TInt Audio::GetSampleRate() {
-  return sample_rate;
-
-}
-void Audio::Mixdown(TInt16 *stereoAudioBuffer, TInt frameCount) {
-
-}
-void Audio::Mute() {
-
-}
-void Audio::Unmute() {
-
-}
 
 
 /**** END Mac/Linux ****/
 #endif
 
- #extern
+TInt Audio::GetSampleRate() {
+  return sample_rate;
+
+}
+
+
+void Audio::MuteMusic(TBool aMuted) {
+  // printf("%s\n", __func__);
+  audio_mute = aMuted;
+}
