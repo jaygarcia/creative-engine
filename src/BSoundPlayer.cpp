@@ -6,6 +6,8 @@ BSoundPlayer soundPlayer;
 
 #include "Audio.h"
 #include "libxmp/xmp.h"
+#include "../../genus/resources/music/Music.h"
+#include "../../genus/resources/sound_effects/SoundEffects.h"
 
 
 #ifdef __XTENSA__
@@ -89,6 +91,7 @@ static void timerCallback(void *arg) {
 
 
 void BSoundPlayer::Init() {
+  printf("BSoundPlayer::%s\n", __func__);fflush(stdout);
   audio.Init(SAMPLE_RATE);
   
   audioBuffer = (short *)heap_caps_malloc(sizeof(short) * AUDIO_BUFF_SIZE, MALLOC_CAP_8BIT); // SPI RAM
@@ -137,12 +140,13 @@ static int loadSong(int temp) {
   loadSamples();
   printf("Loading Song: %i\n", temp); fflush(stdout);
   int loadResult = 0;
-    //Todo: converted to an array.
+    //Todo: @Jay Garcia Implement rcomp's slots
+
   switch(temp) {
 
     case 0:
 
-      // loadResult = xmp_load_module_from_memory(xmpContext, (void *)_00_Intro_xm_start, _00_Intro_xm_start - _00_Intro_xm_end);
+      loadResult = xmp_load_module_from_memory(xmpContext, (void *)_03_Stage_2_xm_start, _03_Stage_2_xm_start - _03_Stage_2_xm_end);
     break;
     
 

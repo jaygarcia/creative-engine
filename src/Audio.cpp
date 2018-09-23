@@ -9,7 +9,7 @@ Audio audio;
 #define I2S_NUM (I2S_NUM_0)
 #define BUILTIN_DAC_ENABLED (1)
 
-TFloat audio_volume = .062f; // half way
+TFloat audio_volume = .5; // half way
 TBool audio_mute = false;
 TUint16 sample_rate;
 
