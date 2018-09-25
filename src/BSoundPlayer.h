@@ -28,7 +28,7 @@ public:
 // public:
 //   // play a sound, overriding an existing sound with lower priority (if necessary)
 //   // sound will loop back to start if flag is set
-//   virtual TBool PlaySound(TInt aSoundNumber, TInt aPriority, TBool aLoop = EFalse) = 0;
+   TBool PlaySound(TInt aSoundNumber, TInt aPriority, TBool aLoop = EFalse);
 //   // stop a currently playing sound
 //   virtual TBool StopSound(TInt aSoundNumber) = 0;
 //   // mute only sound effects (music will continue to be heard)

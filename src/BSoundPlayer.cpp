@@ -99,7 +99,7 @@ void BSoundPlayer::Init() {
   audio.MuteMusic();
 
   xmpContext = xmp_create_context();
-
+  loadSamples();
   //*** CREATE TIMER ***//
   timer_args.callback = &timerCallback;
   timer_args.name = "audioTimer";
@@ -124,31 +124,47 @@ void BSoundPlayer::Init() {
 // Called EVERY Time we load a song because we have to destroy the context.
 static void loadSamples() {
   xmp_start_smix(xmpContext, 4/* Channels */, 9 /* Samples */);
-  // xmp_smix_load_sample_from_memory(xmpContext, 0, (void *)_SFX_player_shoot_wav_start, _SFX_player_shoot_wav_start - _SFX_player_shoot_wav_end);
+  xmp_smix_load_sample_from_memory(xmpContext, 0, (void *)_SFX_boss_explode_wav_start, _SFX_boss_explode_wav_start - _SFX_boss_explode_wav_end);
+  xmp_smix_load_sample_from_memory(xmpContext, 1, (void *)_SFX_enemy_explode_wav_start, _SFX_enemy_explode_wav_start - _SFX_enemy_explode_wav_end);
+  xmp_smix_load_sample_from_memory(xmpContext, 2, (void *)_SFX_enemy_flyby_wav_start, _SFX_enemy_flyby_wav_start - _SFX_enemy_flyby_wav_end);
+  xmp_smix_load_sample_from_memory(xmpContext, 3, (void *)_SFX_enemy_shoot_wav_start, _SFX_enemy_shoot_wav_start - _SFX_enemy_shoot_wav_end);
+  xmp_smix_load_sample_from_memory(xmpContext, 4, (void *)_SFX_next_attract_char_wav_start, _SFX_next_attract_char_wav_start - _SFX_next_attract_char_wav_end);
+  xmp_smix_load_sample_from_memory(xmpContext, 5, (void *)_SFX_next_attract_screen_wav_start, _SFX_next_attract_screen_wav_start - _SFX_next_attract_screen_wav_end);
+  xmp_smix_load_sample_from_memory(xmpContext, 6, (void *)_SFX_player_hit_wav_start, _SFX_player_hit_wav_start - _SFX_player_hit_wav_end);
+  xmp_smix_load_sample_from_memory(xmpContext, 7, (void *)_SFX_player_shoot_wav_start, _SFX_player_shoot_wav_start - _SFX_player_shoot_wav_end);
+  xmp_smix_load_sample_from_memory(xmpContext, 8, (void *)_SFX_speed_boost_wav_start, _SFX_speed_boost_wav_start - _SFX_speed_boost_wav_end);
 }
 
 
 static int loadSong(int temp) {
 
-  xmp_end_player(xmpContext);
-  xmp_end_smix(xmpContext);
+//  xmp_end_player(xmpContext);
+//  xmp_end_smix(xmpContext);
   xmp_stop_module(xmpContext);
-  xmp_free_context(xmpContext);
+//  xmp_free_context(xmpContext);
+//  xmpContext = xmp_create_context();
+//  loadSamples();
+//
 
-
-  xmpContext = xmp_create_context();
-  loadSamples();
   printf("Loading Song: %i\n", temp); fflush(stdout);
   int loadResult = 0;
-    //Todo: @Jay Garcia Implement rcomp's slots
+    //Todo: @Jay Garcia Implement rcomp's slots & an array
 
   switch(temp) {
 
     case 0:
-
       loadResult = xmp_load_module_from_memory(xmpContext, (void *)_03_Stage_2_xm_start, _03_Stage_2_xm_start - _03_Stage_2_xm_end);
     break;
-    
+    case 1:
+      loadResult = xmp_load_module_from_memory(xmpContext, (void *)_05_Stage_3_xm_start, _05_Stage_3_xm_start - _05_Stage_3_xm_end);
+      break;
+    case 2:
+      loadResult = xmp_load_module_from_memory(xmpContext, (void *)_07_Stage_4_xm_start, _07_Stage_4_xm_start - _07_Stage_4_xm_end);
+      break;
+    case 3:
+      loadResult = xmp_load_module_from_memory(xmpContext, (void *)_09_Stage_5_xm_start, _09_Stage_5_xm_start - _09_Stage_5_xm_end);
+      break;
+
 
     default:
     break;
@@ -189,7 +205,7 @@ TBool BSoundPlayer::PlayMusic(TInt aSongId, TBool aLoop) {
     }
 
     xmp_start_player(xmpContext, SAMPLE_RATE, 0);
-    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, 256);
+    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, 16);
     xmp_set_player(xmpContext, XMP_PLAYER_MIX, 0);
 
 
@@ -200,6 +216,28 @@ TBool BSoundPlayer::PlayMusic(TInt aSongId, TBool aLoop) {
   }
 
   return EFalse;
+}
+
+TUint8 sfxChannel = 0;
+
+TBool BSoundPlayer::PlaySound(TInt aSoundNumber, TInt aPriority, TBool aLoop) {
+  //Todo: priority?
+  if (musicFileLoaded == false || current_song == -1) {
+    return false;
+  }
+
+//  if (id == SFX_SPEED_BOOST && speedBoostSfxPlaying == false) {
+//    xmp_smix_play_sample(ctx, id, 40, 128, 4);
+//    speedBoostSfxPlaying = true;
+//  }
+//  else {
+    xmp_smix_play_sample(xmpContext, aSoundNumber, 60, 32 /* Volume */, sfxChannel);
+    sfxChannel++;
+    if (sfxChannel >= 3) {
+      sfxChannel = 0;
+    }
+//  }
+  return true;
 }
 
 TBool BSoundPlayer::MuteMusic(TBool aMuted) {
