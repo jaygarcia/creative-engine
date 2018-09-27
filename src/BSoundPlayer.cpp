@@ -22,7 +22,7 @@ BSoundPlayer soundPlayer;
 
 #else
 // Todo: @Jay Anything else? (SDL2?)
-
+//#include SDL2 lib
 #endif
 
 
@@ -46,7 +46,7 @@ xmp_context xmpContext;
 
 short *audioBuffer;
 
-volatile int8_t current_song = -1;
+volatile TInt8 current_song = -1;
 bool musicFileLoaded = false;
 
 // Prototype static prototype methods
@@ -54,14 +54,18 @@ static void loadSamples();
 static int loadSong(int temp);
 
 BSoundPlayer::BSoundPlayer() {
-
+  mMusicVolume = 0.5f;
 }
 
 BSoundPlayer::~BSoundPlayer() {
-
+  Reset();
+  xmp_end_player(xmpContext);
+#ifndef __XTENSA__
+  //TODO: Tear down SDL
+#endif
 }
 
-#ifdef __XTENSA__ 
+#ifdef __XTENSA__
 
 
 bool WARNED_OF_PLAY_BUFFER = false;
@@ -70,6 +74,8 @@ esp_timer_create_args_t timer_args;
 esp_timer_handle_t timer;
 
 static void timerCallback(void *arg) {
+  // Should we test for XMP_STATE_UNLOADED, XMP_STATE_PLAYING?
+
   if (musicFileLoaded && (current_song > -1)) {
     int result = xmp_play_buffer(xmpContext, audioBuffer, AUDIO_BUFF_SIZE, 0);
 
@@ -79,13 +85,13 @@ static void timerCallback(void *arg) {
         printf("play_audioBufferer not zero (result = %i)!\n", result);fflush(stdout);
         WARNED_OF_PLAY_BUFFER = true;
       }
-      memset(audioBuffer, 0, AUDIO_BUFF_SIZE);      
+      memset(audioBuffer, 0, AUDIO_BUFF_SIZE);
     }
   }
   else {
     memset(audioBuffer, 0, AUDIO_BUFF_SIZE);
   }
-  
+
   audio.Submit(audioBuffer, AUDIO_BUFF_SIZE >> 2);
 }
 
@@ -93,7 +99,7 @@ static void timerCallback(void *arg) {
 void BSoundPlayer::Init() {
   printf("BSoundPlayer::%s\n", __func__);fflush(stdout);
   audio.Init(SAMPLE_RATE);
-  
+
   audioBuffer = (short *)heap_caps_malloc(sizeof(short) * AUDIO_BUFF_SIZE, MALLOC_CAP_8BIT); // SPI RAM
   memset(audioBuffer, 0, AUDIO_BUFF_SIZE);
   audio.MuteMusic();
@@ -149,7 +155,6 @@ static int loadSong(int temp) {
   printf("Loading Song: %i\n", temp); fflush(stdout);
   int loadResult = 0;
     //Todo: @Jay Garcia Implement rcomp's slots & an array
-
   switch(temp) {
 
     case 0:
@@ -164,11 +169,9 @@ static int loadSong(int temp) {
     case 3:
       loadResult = xmp_load_module_from_memory(xmpContext, (void *)_09_Stage_5_xm_start, _09_Stage_5_xm_start - _09_Stage_5_xm_end);
       break;
-
-
     default:
     break;
-  }  
+  }
   printf("loadResult = %i\n", loadResult); fflush(stdout);
   return loadResult;
 }
@@ -187,15 +190,15 @@ TBool BSoundPlayer::PlayMusic(TInt aSongId, TBool aLoop) {
     audio.MuteMusic();
 
     xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, 0);
-    
-    int loadResult = loadSong(tempSongId);  
+
+    int loadResult = loadSong(tempSongId);
 
     if (loadResult < 0) {
       // printf("Could not open song %i! %i\n", tempSongId, loadResult);
       // Sometimes XMP fails for no obvious reason. Try one more time for good measure.
-      loadResult = loadSong(tempSongId);  
-    }  
-    
+      loadResult = loadSong(tempSongId);
+    }
+
     if (loadResult == 0) {
       musicFileLoaded = true;
     }
@@ -205,7 +208,7 @@ TBool BSoundPlayer::PlayMusic(TInt aSongId, TBool aLoop) {
     }
 
     xmp_start_player(xmpContext, SAMPLE_RATE, 0);
-    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, 16);
+    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, );
     xmp_set_player(xmpContext, XMP_PLAYER_MIX, 0);
 
 
@@ -219,6 +222,78 @@ TBool BSoundPlayer::PlayMusic(TInt aSongId, TBool aLoop) {
 }
 
 TUint8 sfxChannel = 0;
+
+TBool BSoundPlayer::StopMusic() {
+  // Should we test for XMP_STATE_UNLOADED, XMP_STATE_PLAYING?
+  xmp_stop_module(xmpContext);
+  current_song = -1;
+  return true;
+}
+
+TBool BSoundPlayer::Reset() {
+  StopMusic();
+//  xmp_end_player(xmpContext);
+  musicFileLoaded = false;
+  return true;
+}
+
+TBool BSoundPlayer::SetVolume(TFloat aPercent) {
+  if (xmpContext) {
+    if (aPercent > 1.0f) {
+      aPercent = 1.0f;
+    }
+    if (aPercent < 0.0f) {
+      aPercent = 0;
+    }
+
+    mMusicVolume = (TUint8)(aPercent * 255);
+    mEffectsVolume = mMusicVolume;
+
+    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, mMusicVolume);
+    return true;
+  }
+
+  return false;
+}
+
+TBool BSoundPlayer::SetMusicVolume(TFloat aPercent) {
+  if (xmpContext) {
+    if (aPercent > 1.0f) {
+      aPercent = 1.0f;
+    }
+    if (aPercent < 0.0f) {
+      aPercent = 0;
+    }
+
+    mMusicVolume = (TUint8)(aPercent * 255);
+
+    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, mMusicVolume);
+    return true;
+  }
+
+  return false;
+}
+
+TBool BSoundPlayer::SetEffectsVolume(TFloat aPercent) {
+  if (xmpContext) {
+    if (aPercent > 1.0f) {
+      aPercent = 1.0f;
+    }
+
+    if (aPercent < 0.0f) {
+      aPercent = 0;
+    }
+
+    mEffectsVolume = (TUint8)(aPercent * 255);
+
+    xmp_set_player(xmpContext, XMP_PLAYER_SMIX_VOLUME, mEffectsVolume);
+    return true;
+  }
+
+  return false;
+}
+
+
 
 TBool BSoundPlayer::PlaySound(TInt aSoundNumber, TInt aPriority, TBool aLoop) {
   //Todo: priority?

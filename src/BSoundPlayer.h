@@ -16,19 +16,23 @@
  */
 class BSoundPlayer : public BBase {
 public:
+  TUint8 mMusicVolume;
+  TUint8 mEffectsVolume;
   BSoundPlayer();
   ~BSoundPlayer();
 public:
   void Init();
 
 //   // set system volume
-//   virtual TBool SetVolume(TFloat aPercent) = 0;
+  TBool SetVolume(TFloat aPercent);
+  TBool SetMusicVolume(TFloat aPercent);
+  TBool SetEffectsVolume(TFloat aPercent);
 //   // mute or unute sounds & music (MASTER mute)
 //   virtual TBool Mute(TBool aMuted = ETrue) = 0;
 // public:
 //   // play a sound, overriding an existing sound with lower priority (if necessary)
 //   // sound will loop back to start if flag is set
-   TBool PlaySound(TInt aSoundNumber, TInt aPriority, TBool aLoop = EFalse);
+  TBool PlaySound(TInt aSoundNumber, TInt aPriority, TBool aLoop = EFalse);
 //   // stop a currently playing sound
 //   virtual TBool StopSound(TInt aSoundNumber) = 0;
 //   // mute only sound effects (music will continue to be heard)
@@ -40,14 +44,14 @@ public:
 //   // if a score is already playing, it will be stopped first
   TBool PlayMusic(TInt aSongId, TBool aLoop = ETrue);
 //   //  stop playing music
-//   virtual TBool StopMusic() = 0;
+  TBool StopMusic();
 //   // toggle music paused/playing
-//   virtual TBool PauseMusic(TBool aPaused = ETrue) = 0;
+  TBool PauseMusic(TBool aPaused = ETrue);
 //   // toggle music muted (will not mute sound effects)
   TBool MuteMusic(TBool aMuted = ETrue);
 // public:
 //   // reset music player, stop all sounds and music
-//   virtual TBool Reset() = 0;
+  TBool Reset();
 };
 
 extern BSoundPlayer soundPlayer;
