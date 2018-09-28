@@ -3,7 +3,6 @@
 
 Audio audio;
 TFloat audio_volume = .5; // half way
-TBool audio_mute = false;
 
 
 
@@ -152,7 +151,7 @@ void Audio::Submit(TInt16* stereomAudioBuffer, int frameCount) {
     int32_t dac0;
     int32_t dac1;
 
-    if (audio_volume == 0.0f || audio_mute) {
+    if (audio_volume == 0.0f || mMuted) {
       // Disable amplifier
       dac0 = 0;
       dac1 = 0;

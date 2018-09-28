@@ -54,7 +54,7 @@ static void loadSamples();
 static int loadSong(int temp);
 
 BSoundPlayer::BSoundPlayer() {
-  mMusicVolume = 64;
+  mMusicVolume = 16;
 }
 
 BSoundPlayer::~BSoundPlayer() {
@@ -188,7 +188,7 @@ TBool BSoundPlayer::PlayMusic(int8_t aSongId, TBool aLoop) {
   if (current_song != aSongId) {
     current_song = -1;
     musicFileLoaded = false;
-    audio.MuteMusic();
+    audio.MuteMusic(ETrue);
 
     xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, 0);
 
