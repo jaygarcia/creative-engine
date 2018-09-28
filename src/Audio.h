@@ -4,6 +4,8 @@
 #include "BTypes.h"
 #include "BBase.h"
 
+extern short *audioBuffer;
+
 
 #ifdef __XTENSA__
 /***** ODROID GO *****/
@@ -12,26 +14,44 @@
 #include "driver/i2s.h"
 #include "driver/rtc_io.h"
 
+
+typedef void (*TAudioDriverCallback)(void *arg);
 #else
 /***** Mac/Linux *****/
-// SDL2 audio
+#include <SDL_audio.h>
+
+//typedef void (*)(void *,Uint8 *,int) SDL_AudioCallback
+typedef SDL_AudioCallback TAudioDriverCallback;
 
 #endif
 
 
+
 class Audio : public BBase {
+protected:
+  TBool mMuted;
+
+public:
+  short *mAudioBuffer;
+
 public:
   Audio();
   virtual ~Audio();
-  void Init(TUint16 new_sample_rate);
+  void Init(TAudioDriverCallback aDriverCallback);
 
   void SetVolume(TFloat value);
   //  void ChangeVolume();
   TFloat GetVolume();
   void Terminate();
+
+#ifdef __XTENSA__
   void Submit(TInt16 *stereoAudioBuffer, TInt frameCount);
+  static void i2sTimerCallback(void *arg);
+#endif
+
   TInt GetSampleRate();
   void MuteMusic(TBool aMuted = ETrue);
+
 };
 
 

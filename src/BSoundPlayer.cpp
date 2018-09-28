@@ -23,6 +23,8 @@ BSoundPlayer soundPlayer;
 #else
 // Todo: @Jay Anything else? (SDL2?)
 //#include SDL2 lib
+#include <SDL.h>
+#include <SDL_audio.h>
 #endif
 
 
@@ -31,22 +33,20 @@ BSoundPlayer soundPlayer;
 
 #define SAMPLE_RATE (22050)
 #define TIMER_LENGTH 50
-#define AUDIO_BUFF_SIZE 12 
+#define AUDIO_BUFF_SIZE 12
 
 #else
 
 #define SAMPLE_RATE (44100)
 #define TIMER_LENGTH 50
-#define AUDIO_BUFF_SIZE 12 
+#define AUDIO_BUFF_SIZE 12
 
 #endif
 
 
 xmp_context xmpContext;
 
-short *audioBuffer;
-
-volatile TInt8 current_song = -1;
+volatile int8_t current_song = -1;
 bool musicFileLoaded = false;
 
 // Prototype static prototype methods
@@ -54,7 +54,7 @@ static void loadSamples();
 static int loadSong(int temp);
 
 BSoundPlayer::BSoundPlayer() {
-  mMusicVolume = 0.5f;
+  mMusicVolume = 64;
 }
 
 BSoundPlayer::~BSoundPlayer() {
@@ -70,14 +70,16 @@ BSoundPlayer::~BSoundPlayer() {
 
 bool WARNED_OF_PLAY_BUFFER = false;
 
-esp_timer_create_args_t timer_args;
-esp_timer_handle_t timer;
-
+int x = 0;
 static void timerCallback(void *arg) {
-  // Should we test for XMP_STATE_UNLOADED, XMP_STATE_PLAYING?
+// Should we test for XMP_STATE_UNLOADED, XMP_STATE_PLAYING?
+//
+//  if (x == 0) {
+//      printf("musicFileLoaded = %i :: current_song = %i\n", musicFileLoaded , current_song);fflush(stdout);
+//  }
 
   if (musicFileLoaded && (current_song > -1)) {
-    int result = xmp_play_buffer(xmpContext, audioBuffer, AUDIO_BUFF_SIZE, 0);
+    int result = xmp_play_buffer(xmpContext, audio.mAudioBuffer, AUDIO_BUFF_SIZE, 0);
 
     if (result != 0) {
       if (!WARNED_OF_PLAY_BUFFER) {
@@ -85,44 +87,43 @@ static void timerCallback(void *arg) {
         printf("play_audioBufferer not zero (result = %i)!\n", result);fflush(stdout);
         WARNED_OF_PLAY_BUFFER = true;
       }
-      memset(audioBuffer, 0, AUDIO_BUFF_SIZE);
+      memset(audio.mAudioBuffer, 0, AUDIO_BUFF_SIZE);
     }
   }
   else {
-    memset(audioBuffer, 0, AUDIO_BUFF_SIZE);
+    if (x == 0) {
+    }
+    memset(audio.mAudioBuffer, 0, AUDIO_BUFF_SIZE);
   }
 
-  audio.Submit(audioBuffer, AUDIO_BUFF_SIZE >> 2);
-}
+  x++;
+  if (x > 500) {
+    x = 0;
+  }
 
+  audio.Submit(audio.mAudioBuffer, AUDIO_BUFF_SIZE >> 2);
+}
 
 void BSoundPlayer::Init() {
   printf("BSoundPlayer::%s\n", __func__);fflush(stdout);
-  audio.Init(SAMPLE_RATE);
 
-  audioBuffer = (short *)heap_caps_malloc(sizeof(short) * AUDIO_BUFF_SIZE, MALLOC_CAP_8BIT); // SPI RAM
-  memset(audioBuffer, 0, AUDIO_BUFF_SIZE);
-  audio.MuteMusic();
+  audio.Init(&timerCallback);
 
   xmpContext = xmp_create_context();
   loadSamples();
-  //*** CREATE TIMER ***//
-  timer_args.callback = &timerCallback;
-  timer_args.name = "audioTimer";
-
-  esp_timer_create(&timer_args, &timer);
-  esp_timer_start_periodic(timer, TIMER_LENGTH);
 }
+
+
+
 #else
 
-//SDL2 audio callback
-static void timerCallback() {
-
-}
-
 void BSoundPlayer::Init() {
-    //Todo: @Jay :: SDL2
+//  audio.Init(timerCallback);
+//
+//  xmpContext = xmp_create_context();
+//  loadSamples();
 }
+
 
 #endif
 
@@ -177,26 +178,26 @@ static int loadSong(int temp) {
 }
 
 
-TBool BSoundPlayer::PlayMusic(TInt aSongId, TBool aLoop) {
+TBool BSoundPlayer::PlayMusic(int8_t aSongId, TBool aLoop) {
+  printf("BSoundPlayer::%s %i\n", __func__, aSongId); fflush(stdout);
   if (aSongId == -1) {
     current_song = -1;
     return EFalse;
   }
 
   if (current_song != aSongId) {
-    int tempSongId = aSongId;
     current_song = -1;
     musicFileLoaded = false;
     audio.MuteMusic();
 
     xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, 0);
 
-    int loadResult = loadSong(tempSongId);
+    int loadResult = loadSong(aSongId);
 
     if (loadResult < 0) {
       // printf("Could not open song %i! %i\n", tempSongId, loadResult);
       // Sometimes XMP fails for no obvious reason. Try one more time for good measure.
-      loadResult = loadSong(tempSongId);
+      loadResult = loadSong(aSongId);
     }
 
     if (loadResult == 0) {
@@ -204,16 +205,18 @@ TBool BSoundPlayer::PlayMusic(TInt aSongId, TBool aLoop) {
     }
 
     if (!musicFileLoaded) {
+      printf("MUSIC LOADING FAILED!\n"); fflush(stdout);
       return EFalse;
     }
 
     xmp_start_player(xmpContext, SAMPLE_RATE, 0);
-    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, );
+    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, mMusicVolume);
     xmp_set_player(xmpContext, XMP_PLAYER_MIX, 0);
 
 
     audio.MuteMusic(EFalse);
-    current_song = tempSongId;
+    current_song = aSongId;
+    printf("current_song = %i\n", current_song); fflush(stdout);
 
     return ETrue;
   }
