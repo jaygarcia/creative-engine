@@ -6,8 +6,6 @@ BSoundPlayer soundPlayer;
 
 #include "Audio.h"
 #include "libxmp/xmp.h"
-#include "../../genus/resources/music/Music.h"
-#include "../../genus/resources/sound_effects/SoundEffects.h"
 
 
 #ifdef __XTENSA__
@@ -51,7 +49,7 @@ bool musicFileLoaded = false;
 
 // Prototype static prototype methods
 static void loadSamples();
-static int loadSong(int temp);
+static int loadSong(BRaw *aSong);
 
 BSoundPlayer::BSoundPlayer() {
   mMusicVolume = 16;
@@ -131,19 +129,19 @@ void BSoundPlayer::Init() {
 // Called EVERY Time we load a song because we have to destroy the context.
 static void loadSamples() {
   xmp_start_smix(xmpContext, 4/* Channels */, 9 /* Samples */);
-  xmp_smix_load_sample_from_memory(xmpContext, 0, (void *)_SFX_boss_explode_wav_start, _SFX_boss_explode_wav_start - _SFX_boss_explode_wav_end);
-  xmp_smix_load_sample_from_memory(xmpContext, 1, (void *)_SFX_enemy_explode_wav_start, _SFX_enemy_explode_wav_start - _SFX_enemy_explode_wav_end);
-  xmp_smix_load_sample_from_memory(xmpContext, 2, (void *)_SFX_enemy_flyby_wav_start, _SFX_enemy_flyby_wav_start - _SFX_enemy_flyby_wav_end);
-  xmp_smix_load_sample_from_memory(xmpContext, 3, (void *)_SFX_enemy_shoot_wav_start, _SFX_enemy_shoot_wav_start - _SFX_enemy_shoot_wav_end);
-  xmp_smix_load_sample_from_memory(xmpContext, 4, (void *)_SFX_next_attract_char_wav_start, _SFX_next_attract_char_wav_start - _SFX_next_attract_char_wav_end);
-  xmp_smix_load_sample_from_memory(xmpContext, 5, (void *)_SFX_next_attract_screen_wav_start, _SFX_next_attract_screen_wav_start - _SFX_next_attract_screen_wav_end);
-  xmp_smix_load_sample_from_memory(xmpContext, 6, (void *)_SFX_player_hit_wav_start, _SFX_player_hit_wav_start - _SFX_player_hit_wav_end);
-  xmp_smix_load_sample_from_memory(xmpContext, 7, (void *)_SFX_player_shoot_wav_start, _SFX_player_shoot_wav_start - _SFX_player_shoot_wav_end);
-  xmp_smix_load_sample_from_memory(xmpContext, 8, (void *)_SFX_speed_boost_wav_start, _SFX_speed_boost_wav_start - _SFX_speed_boost_wav_end);
+//  xmp_smix_load_sample_from_memory(xmpContext, 0, (void *)_SFX_boss_explode_wav_start, _SFX_boss_explode_wav_start - _SFX_boss_explode_wav_end);
+//  xmp_smix_load_sample_from_memory(xmpContext, 1, (void *)_SFX_enemy_explode_wav_start, _SFX_enemy_explode_wav_start - _SFX_enemy_explode_wav_end);
+//  xmp_smix_load_sample_from_memory(xmpContext, 2, (void *)_SFX_enemy_flyby_wav_start, _SFX_enemy_flyby_wav_start - _SFX_enemy_flyby_wav_end);
+//  xmp_smix_load_sample_from_memory(xmpContext, 3, (void *)_SFX_enemy_shoot_wav_start, _SFX_enemy_shoot_wav_start - _SFX_enemy_shoot_wav_end);
+//  xmp_smix_load_sample_from_memory(xmpContext, 4, (void *)_SFX_next_attract_char_wav_start, _SFX_next_attract_char_wav_start - _SFX_next_attract_char_wav_end);
+//  xmp_smix_load_sample_from_memory(xmpContext, 5, (void *)_SFX_next_attract_screen_wav_start, _SFX_next_attract_screen_wav_start - _SFX_next_attract_screen_wav_end);
+//  xmp_smix_load_sample_from_memory(xmpContext, 6, (void *)_SFX_player_hit_wav_start, _SFX_player_hit_wav_start - _SFX_player_hit_wav_end);
+//  xmp_smix_load_sample_from_memory(xmpContext, 7, (void *)_SFX_player_shoot_wav_start, _SFX_player_shoot_wav_start - _SFX_player_shoot_wav_end);
+//  xmp_smix_load_sample_from_memory(xmpContext, 8, (void *)_SFX_speed_boost_wav_start, _SFX_speed_boost_wav_start - _SFX_speed_boost_wav_end);
 }
 
 
-static int loadSong(int temp) {
+static int loadSong(BRaw *aSong) {
 
 //  xmp_end_player(xmpContext);
 //  xmp_end_smix(xmpContext);
@@ -153,76 +151,96 @@ static int loadSong(int temp) {
 //  loadSamples();
 //
 
-  printf("Loading Song: %i\n", temp); fflush(stdout);
-  int loadResult = 0;
-    //Todo: @Jay Garcia Implement rcomp's slots & an array
-  switch(temp) {
+  printf("Loading Song: %i\n", aSong->mSize); fflush(stdout);
+  int loadResult = xmp_load_module_from_memory(xmpContext, (void *)aSong->mData, aSong->mSize);
 
-    case 0:
-      loadResult = xmp_load_module_from_memory(xmpContext, (void *)_03_Stage_2_xm_start, _03_Stage_2_xm_start - _03_Stage_2_xm_end);
-    break;
-    case 1:
-      loadResult = xmp_load_module_from_memory(xmpContext, (void *)_05_Stage_3_xm_start, _05_Stage_3_xm_start - _05_Stage_3_xm_end);
-      break;
-    case 2:
-      loadResult = xmp_load_module_from_memory(xmpContext, (void *)_07_Stage_4_xm_start, _07_Stage_4_xm_start - _07_Stage_4_xm_end);
-      break;
-    case 3:
-      loadResult = xmp_load_module_from_memory(xmpContext, (void *)_09_Stage_5_xm_start, _09_Stage_5_xm_start - _09_Stage_5_xm_end);
-      break;
-    default:
-    break;
-  }
+
   printf("loadResult = %i\n", loadResult); fflush(stdout);
   return loadResult;
 }
 
 
-TBool BSoundPlayer::PlayMusic(int8_t aSongId, TBool aLoop) {
-  printf("BSoundPlayer::%s %i\n", __func__, aSongId); fflush(stdout);
-  if (aSongId == -1) {
-    current_song = -1;
+TBool BSoundPlayer::PlayMusic(BRaw *aSong, TBool aLoop) {
+  current_song = -1;
+  musicFileLoaded = false;
+  audio.MuteMusic(ETrue);
+
+  xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, 0);
+
+  int loadResult = loadSong(aSong);
+
+  if (loadResult < 0) {
+    // printf("Could not open song %i! %i\n", tempSongId, loadResult);
+    // Sometimes XMP fails for no obvious reason. Try one more time for good measure.
+    loadResult = loadSong(aSong);
+  }
+
+  if (loadResult == 0) {
+    musicFileLoaded = true;
+  }
+
+  if (!musicFileLoaded) {
+    printf("MUSIC LOADING FAILED!\n"); fflush(stdout);
     return EFalse;
   }
 
-  if (current_song != aSongId) {
-    current_song = -1;
-    musicFileLoaded = false;
-    audio.MuteMusic(ETrue);
-
-    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, 0);
-
-    int loadResult = loadSong(aSongId);
-
-    if (loadResult < 0) {
-      // printf("Could not open song %i! %i\n", tempSongId, loadResult);
-      // Sometimes XMP fails for no obvious reason. Try one more time for good measure.
-      loadResult = loadSong(aSongId);
-    }
-
-    if (loadResult == 0) {
-      musicFileLoaded = true;
-    }
-
-    if (!musicFileLoaded) {
-      printf("MUSIC LOADING FAILED!\n"); fflush(stdout);
-      return EFalse;
-    }
-
-    xmp_start_player(xmpContext, SAMPLE_RATE, 0);
-    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, mMusicVolume);
-    xmp_set_player(xmpContext, XMP_PLAYER_MIX, 0);
+  xmp_start_player(xmpContext, SAMPLE_RATE, 0);
+  xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, mMusicVolume);
+  xmp_set_player(xmpContext, XMP_PLAYER_MIX, 0);
 
 
-    audio.MuteMusic(EFalse);
-    current_song = aSongId;
-    printf("current_song = %i\n", current_song); fflush(stdout);
+  audio.MuteMusic(EFalse);
+  printf("current_song = %i\n", current_song); fflush(stdout);
 
-    return ETrue;
-  }
-
-  return EFalse;
+  return ETrue;
 }
+
+//
+//TBool BSoundPlayer::PlayMusic(int8_t aSongId, TBool aLoop) {
+//  printf("BSoundPlayer::%s %i\n", __func__, aSongId); fflush(stdout);
+//  if (aSongId == -1) {
+//    current_song = -1;
+//    return EFalse;
+//  }
+//
+//  if (current_song != aSongId) {
+//    current_song = -1;
+//    musicFileLoaded = false;
+//    audio.MuteMusic(ETrue);
+//
+//    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, 0);
+//
+//    int loadResult = loadSong(aSongId);
+//
+//    if (loadResult < 0) {
+//      // printf("Could not open song %i! %i\n", tempSongId, loadResult);
+//      // Sometimes XMP fails for no obvious reason. Try one more time for good measure.
+//      loadResult = loadSong(aSongId);
+//    }
+//
+//    if (loadResult == 0) {
+//      musicFileLoaded = true;
+//    }
+//
+//    if (!musicFileLoaded) {
+//      printf("MUSIC LOADING FAILED!\n"); fflush(stdout);
+//      return EFalse;
+//    }
+//
+//    xmp_start_player(xmpContext, SAMPLE_RATE, 0);
+//    xmp_set_player(xmpContext, XMP_PLAYER_VOLUME, mMusicVolume);
+//    xmp_set_player(xmpContext, XMP_PLAYER_MIX, 0);
+//
+//
+//    audio.MuteMusic(EFalse);
+//    current_song = aSongId;
+//    printf("current_song = %i\n", current_song); fflush(stdout);
+//
+//    return ETrue;
+//  }
+//
+//  return EFalse;
+//}
 
 TUint8 sfxChannel = 0;
 

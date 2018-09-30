@@ -7,13 +7,11 @@
 #include "BList.h"
 #include "Panic.h"
 
-#include "Controls.h"
-#include "Display.h"
-#include "BSoundPlayer.h"
-#include "Audio.h"
-
 #include "BViewPort.h"
 #include "BBitmap.h"
+#include "BFont.h"
+#include "Display.h"
+#include "Controls.h"
 #include "BSprite.h"
 #include "BProcess.h"
 #include "BResourceManager.h"

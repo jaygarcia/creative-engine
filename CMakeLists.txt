@@ -3,6 +3,8 @@ project(creative_engine)
 
 set(CMAKE_CXX_STANDARD 11)
 
+
+
 add_library(creative_engine
         src/BAnimSprite.h
         src/BBase.h

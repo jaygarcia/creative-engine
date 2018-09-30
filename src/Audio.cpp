@@ -43,9 +43,7 @@ TFloat Audio::GetVolume(){
 }
 
 void Audio::SetVolume(TFloat value) {
-  // printf("%s(%f)\n", __func__, value);
   TFloat newValue = audio_volume + value;
-  // printf("newValue = %f\n", newValue);
 
   if (newValue > .124f) {
     audio_volume = 0;

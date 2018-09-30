@@ -7,6 +7,7 @@
 
 #include "BTypes.h"
 #include "BBase.h"
+#include "BResourceManager.h"
 
 /**
  * Abstract sound player class.
@@ -42,7 +43,7 @@ public:
 // public:
 //   // play a song, track will loop back to start if flag is set
 //   // if a score is already playing, it will be stopped first
-  TBool PlayMusic(int8_t aSongId, TBool aLoop = ETrue);
+  TBool PlayMusic(BRaw *aSong, TBool aLoop = ETrue);
 //   //  stop playing music
   TBool StopMusic();
 //   // toggle music paused/playing
