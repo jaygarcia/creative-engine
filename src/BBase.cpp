@@ -64,7 +64,7 @@ void FreeMem(TAny *ptr) { free(ptr); }
 
 TAny *ReallocMem(TAny *aPtr, size_t aSize) {
 #ifdef __XTENSA__
-  return heap_caps_realloc(aPtr, aSize);
+  return heap_caps_realloc(aPtr, aSize, MALLOC_CAP_8BIT);
 #else
   return realloc(aPtr, aSize);
 #endif
