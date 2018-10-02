@@ -18,7 +18,7 @@ extern short *audioBuffer;
 typedef void (*TAudioDriverCallback)(void *arg);
 #else
 /***** Mac/Linux *****/
-#include <SDL_audio.h>
+#include <SDL2/SDL_audio.h>
 
 //typedef void (*)(void *,Uint8 *,int) SDL_AudioCallback
 typedef SDL_AudioCallback TAudioDriverCallback;
@@ -48,9 +48,6 @@ public:
   void Submit(TInt16 *stereoAudioBuffer, TInt frameCount);
   static void i2sTimerCallback(void *arg);
 #endif
-
-  TInt GetSampleRate();
-  void MuteMusic(TBool aMuted = ETrue);
 
 };
 

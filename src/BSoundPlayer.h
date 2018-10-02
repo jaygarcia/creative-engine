@@ -19,10 +19,12 @@ class BSoundPlayer : public BBase {
 public:
   TUint8 mMusicVolume;
   TUint8 mEffectsVolume;
+  TBool mMuted;
+
   BSoundPlayer();
   ~BSoundPlayer();
 public:
-  void Init();
+  void Init(TUint8 aNumberEffects = 0);
 
 //   // set system volume
   TBool SetVolume(TFloat aPercent);
@@ -44,15 +46,22 @@ public:
 //   // play a song, track will loop back to start if flag is set
 //   // if a score is already playing, it will be stopped first
   TBool PlayMusic(BRaw *aSong, TBool aLoop = ETrue);
+  TBool LoadEffect(BRaw *aWavFile, TUint8 aSlotNumber, TBool aLoop);
+
 //   //  stop playing music
   TBool StopMusic();
+
 //   // toggle music paused/playing
   TBool PauseMusic(TBool aPaused = ETrue);
 //   // toggle music muted (will not mute sound effects)
-  TBool MuteMusic(TBool aMuted = ETrue);
 // public:
 //   // reset music player, stop all sounds and music
   TBool Reset();
+
+    TBool MuteMusic(TBool aMuted = ETrue) {
+    mMuted = aMuted;
+    return true;
+  }
 };
 
 extern BSoundPlayer soundPlayer;

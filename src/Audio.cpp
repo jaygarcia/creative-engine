@@ -64,15 +64,6 @@ Audio::~Audio() {
 }
 
 
-//static void timerCallback(void *arg) {
-//
-//}
-//
-//void Audio::i2sTimerCallback(void *arg) {
-//
-//}
-//
-
 void Audio::Init(TAudioDriverCallback aDriverCallback) {
   printf("Audio::%s\n", __func__);fflush(stdout);
 
@@ -207,11 +198,10 @@ void Audio::Submit(TInt16* stereomAudioBuffer, int frameCount) {
 #else 
 /*** START Mac/Linux ***/
 
-#include <SDL.h>
-#include <SDL_audio.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_audio.h>
 
 Audio::Audio() {
-  mMuted = false;
 }
 
 Audio::~Audio() {
@@ -224,25 +214,22 @@ Audio::~Audio() {
 
 void Audio::Init(TAudioDriverCallback aDriverCallback) {
   SDL_AudioSpec a;
-
+  printf("Initializing SDL2 Audio\n");
   if (SDL_Init(SDL_INIT_AUDIO) < 0) {
     fprintf(stderr, "sdl: can't initialize: %s\n", SDL_GetError());
     return;
   }
-//
-//  a.freq = 44100;
-//  a.format = AUDIO_S16;
-//  a.channels = 2;
-//  a.samples = 2048;
-//  a.callback = fill_audio;
-//  a.userdata = ctx;
-//
-//  if (SDL_OpenAudio(&a, NULL) < 0) {
-//    fprintf(stderr, "%s\n", SDL_GetError());
-//    return -1;
-//  }
-//
-//  return 0;
+
+  a.freq = SAMPLE_RATE;
+  a.format = AUDIO_S16;
+  a.channels = 2;
+  a.samples = 2048;
+  a.callback = aDriverCallback;
+
+  if (SDL_OpenAudio(&a, nullptr) < 0) {
+    fprintf(stderr, "%s\n", SDL_GetError());
+  }
+
 }
 
 void Audio::SetVolume(TFloat value) {
@@ -256,43 +243,7 @@ TFloat Audio::GetVolume() {
 /**** END Mac/Linux ****/
 #endif
 
-TInt Audio::GetSampleRate() {
-  return SAMPLE_RATE;
-
-}
 
 
-void Audio::MuteMusic(TBool aMuted) {
-  mMuted = aMuted;
-}
 
 
-//static void fill_audio(void *udata, Uint8 *stream, int len)
-//{
-//  if (xmp_play_buffer((xmp_context)udata, stream, len, 0) < 0)
-//    playing = 0;
-//}
-//
-//static int sdl_init(xmp_context ctx)
-//{
-//  SDL_AudioSpec a;
-//
-//  if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-//    fprintf(stderr, "sdl: can't initialize: %s\n", SDL_GetError());
-//    return -1;
-//  }
-//
-//  a.freq = 44100;
-//  a.format = AUDIO_S16;
-//  a.channels = 2;
-//  a.samples = 2048;
-//  a.callback = fill_audio;
-//  a.userdata = ctx;
-//
-//  if (SDL_OpenAudio(&a, NULL) < 0) {
-//    fprintf(stderr, "%s\n", SDL_GetError());
-//    return -1;
-//  }
-//
-//  return 0;
-//}
