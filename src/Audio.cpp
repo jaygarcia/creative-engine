@@ -88,7 +88,7 @@ void Audio::Init(TAudioDriverCallback aDriverCallback) {
 
   mAudioBuffer = (short *)heap_caps_malloc(sizeof(short) * AUDIO_BUFF_SIZE, MALLOC_CAP_8BIT); // SPI RAM
   memset(mAudioBuffer, 0, AUDIO_BUFF_SIZE);
-  audio.MuteMusic();
+//  audio.MuteMusic();
 
   //*** CREATE TIMER ***//
 
@@ -207,7 +207,6 @@ Audio::Audio() {
 Audio::~Audio() {
   SDL_CloseAudio();
 }
-
 
 
 

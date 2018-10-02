@@ -43,6 +43,12 @@ public:
   //  void ChangeVolume();
   TFloat GetVolume();
   void Terminate();
+  void Mute(TBool aMuted) {
+    mMuted = aMuted;
+  }
+  TBool IsMuted() {
+    return mMuted;
+  }
 
 #ifdef __XTENSA__
   void Submit(TInt16 *stereoAudioBuffer, TInt frameCount);
