@@ -37,7 +37,7 @@ void SeedRandom(TUint32 aSeed) {
 
 TUint32 Random() {
   static const TUint32 a = 16807,
-                       m = 2147483647;
+          m = 2147483647;
   sRandomSeed = (a * sRandomSeed) % m;
   return sRandomSeed % m;
 }
@@ -52,9 +52,9 @@ TFloat RandomFloat() {
   return ret;
 }
 // Global Versions
-TAny *AllocMem(size_t size, TUint16 type) {
+TAny *AllocMem(size_t size, TUint16 aType) {
 #ifdef __XTENSA__
-  return heap_caps_malloc(size, type);
+  return heap_caps_malloc(size, aType);
 #else
   return malloc(size);
 #endif
@@ -62,9 +62,9 @@ TAny *AllocMem(size_t size, TUint16 type) {
 
 void FreeMem(TAny *ptr) { free(ptr); }
 
-TAny *ReallocMem(TAny *aPtr, size_t aSize) {
+TAny *ReallocMem(TAny *aPtr, size_t aSize, TInt16 aType) {
 #ifdef __XTENSA__
-  return heap_caps_realloc(aPtr, aSize, MALLOC_CAP_8BIT);
+  return heap_caps_realloc(aPtr, aSize, aType);
 #else
   return realloc(aPtr, aSize);
 #endif
