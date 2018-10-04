@@ -52,9 +52,9 @@ TFloat RandomFloat() {
   return ret;
 }
 // Global Versions
-TAny *AllocMem(size_t size, TUint16 aType) {
+TAny *AllocMem(size_t size, TUint16 type) {
 #ifdef __XTENSA__
-  return heap_caps_malloc(size, aType);
+  return heap_caps_malloc(size, type);
 #else
   return malloc(size);
 #endif
@@ -62,9 +62,9 @@ TAny *AllocMem(size_t size, TUint16 aType) {
 
 void FreeMem(TAny *ptr) { free(ptr); }
 
-TAny *ReallocMem(TAny *aPtr, size_t aSize, TInt16 aType) {
+TAny *ReallocMem(TAny *aPtr, size_t aSize) {
 #ifdef __XTENSA__
-  return heap_caps_realloc(aPtr, aSize, aType);
+  return heap_caps_realloc(aPtr, aSize, MALLOC_CAP_8BIT);
 #else
   return realloc(aPtr, aSize);
 #endif

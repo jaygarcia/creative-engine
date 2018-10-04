@@ -10,7 +10,7 @@
 #include "BSprite.h"
 #include "BProcess.h"
 #include "Display.h"
-
+#include "Audio.h"
 #include "BViewPort.h"
 
 
