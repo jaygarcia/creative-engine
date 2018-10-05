@@ -201,6 +201,7 @@ void Audio::Submit(TInt16* stereomAudioBuffer, int frameCount) {
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_audio.h>
 
+
 Audio::Audio() {
 }
 
@@ -212,22 +213,26 @@ Audio::~Audio() {
 
 
 void Audio::Init(TAudioDriverCallback aDriverCallback) {
-  SDL_AudioSpec a;
+  SDL_AudioSpec audioSpec;
   printf("Initializing SDL2 Audio\n");
   if (SDL_Init(SDL_INIT_AUDIO) < 0) {
     fprintf(stderr, "sdl: can't initialize: %s\n", SDL_GetError());
     return;
   }
 
-  a.freq = SAMPLE_RATE;
-  a.format = AUDIO_S16;
-  a.channels = 2;
-  a.samples = 2048;
-  a.callback = aDriverCallback;
+  audioSpec.freq = SAMPLE_RATE;
+  audioSpec.format = AUDIO_S16;
+  audioSpec.channels = 2;
+  // Lots of samples so we can get accurate row counts!
+  audioSpec.samples = 512;
+  audioSpec.size = 100;
+  audioSpec.callback = aDriverCallback;
 
-  if (SDL_OpenAudio(&a, nullptr) < 0) {
+  if (SDL_OpenAudio(&audioSpec, nullptr) < 0) {
     fprintf(stderr, "%s\n", SDL_GetError());
   }
+
+//  printf("AUDIO SPEC: samples: %i | size: %i\n", audioSpec.samples, audioSpec.size);
 
 }
 
