@@ -39,7 +39,7 @@
 #include <unistd.h>
 #endif
 
-#include <fnmatch.h>
+#include "fnmatch.h"
 
 /*
  * Handle special "module quirks" that can't be detected automatically
