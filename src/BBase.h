@@ -20,9 +20,8 @@
  */
 class BBase {
 public:
-    BBase();
-
-    ~BBase();
+  BBase();
+  ~BBase();
 };
 
 //////// RANDOM NUMBER GENERATOR
