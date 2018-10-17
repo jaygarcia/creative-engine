@@ -10,15 +10,14 @@ TFloat audio_volume = .5; // half way
 
 #define SAMPLE_RATE (22050)
 #define TIMER_LENGTH 50
-#define AUDIO_BUFF_SIZE 12
+#define AUDIO_BUFF_SIZE 128
 esp_timer_create_args_t timer_args;
 esp_timer_handle_t timer;
 
 #else
-
 #define SAMPLE_RATE (44100)
-#define TIMER_LENGTH 50
-#define AUDIO_BUFF_SIZE 12
+
+#define AUDIO_BUFF_SIZE 500
 
 #endif
 
@@ -57,7 +56,7 @@ void Audio::SetVolume(TFloat value) {
 
 
 Audio::Audio() {
-  mMuted = EFalse;
+//  mMuted = EFalse;
 }
 
 Audio::~Audio() {
