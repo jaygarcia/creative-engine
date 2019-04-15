@@ -92,13 +92,17 @@ TBool Controls::Poll() {
 
 Controls::Controls() {
 #ifdef CONTROLLER_SUPPORT
-  SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
+  SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC);
+
+  haptic = ENull;
+  ctrl = ENull;
 
   for (TInt i = 0; i < SDL_NumJoysticks(); ++i) {
     if (!SDL_IsGameController(i)) {
       continue;
     }
     ctrl = SDL_GameControllerOpen(i);
+    haptic = SDL_HapticOpenFromJoystick(SDL_GameControllerGetJoystick(ctrl));
 #ifndef PRODUCTION
 #if (defined(__XTENSA__) && defined(DEBUGME)) || !defined(__XTENSA__)
       SDL_Log("Found a compatible controller named \'%s\'", SDL_GameControllerNameForIndex(i));
@@ -107,14 +111,28 @@ Controls::Controls() {
 #endif
   }
 #endif
-
   Reset();
 }
 
 Controls::~Controls() {
 #ifdef CONTROLLER_SUPPORT
-  SDL_GameControllerClose(ctrl);
-  SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+  if (haptic) {
+    SDL_HapticClose(haptic);
+  }
+
+  SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC);
+#endif
+}
+
+void Controls::Rumble(TFloat aStrength, TInt aTime) {
+#ifdef CONTROLLER_SUPPORT
+  if (haptic == ENull || SDL_NumJoysticks() == 0) {
+    return;
+  }
+
+  // Initialize simple rumble
+  SDL_HapticRumbleInit(haptic);
+  SDL_HapticRumblePlay(haptic, aStrength, aTime);
 #endif
 }
 
