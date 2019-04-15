@@ -83,7 +83,7 @@ Controls::~Controls() {
 
 TBool Controls::Poll() {
   TUint16 buttons = buttonsState();
-  dKeys = (buttons ^ cKeys) & buttons;
+  dKeys |= (buttons ^ cKeys) & buttons;
   cKeys = buttons;
   bKeys = buttons;
   return ETrue;
