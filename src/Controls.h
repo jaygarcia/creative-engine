@@ -51,10 +51,6 @@ public:
     return EFalse;
   }
 
-  TBool CheckPressed(TUint16 bits) {
-    return cKeys & bits;
-  }
-
   TBool IsPressed(TUint16 bits) {
     return (cKeys & bits) ? ETrue : EFalse;
   }
