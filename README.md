@@ -14,7 +14,7 @@ The design criteria for this library/game engine are:
 ## Features
 1) Double-buffered LCD display driver, running at 30Hz.
 2) Resource management (and resource compiler).
-3) Audio driver using[LibXMP](http://xmp.sourceforge.net/).
+3) Audio driver using [LibXMP](http://xmp.sourceforge.net/).
 3) Rich bitmap classes that support ROM and RAM pixel sources (resources).
 4) Simple Sprites using sprite sheets.
 5) Animated Sprites via animation interpreter, inherits from Simple Sprite.
@@ -52,13 +52,8 @@ The following visualization depicts the layers of the various libraries at play.
 [Espressif IoT development Framework (ESP IDF)](https://github.com/espressif/esp-idf) is a low level framework for accessing capabilities of the ESP32-WOVER SOC.
 
 
-
-
 # Set up
-See [the wiki](https://github.com/ModusCreateOrg/creative-engine/wiki) for instructions on getting things set up.
-
-# Games made with creative-engine:
-1) [Genus](https://github.com/ModusCreateOrg/genus)
+See [our developer guide](./md/DEVELOPING.md) for instructions on getting things set up.
 
 
 ## License
