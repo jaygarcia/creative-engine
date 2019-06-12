@@ -143,7 +143,9 @@ void RemoteMatrixDisplay::Update() {
 
 
   LockMutex();
-  memcpy(mCurrentOutputBuffer, mCurrentInputBuffer, mOutputBufferSize);
+  size_t smallerBuffer = (mInputBufferSize < mOutputBufferSize) ? mInputBufferSize : mOutputBufferSize;
+
+  memcpy(mCurrentOutputBuffer, mCurrentInputBuffer, smallerBuffer);
 
   mCurrentInputBuffer = (mCurrentInputBuffer == mInputBuffer1) ? mInputBuffer2 : mInputBuffer1;
   mCurrentOutputBuffer = (mCurrentOutputBuffer == mOutputBuffer1) ? mOutputBuffer2 : mOutputBuffer1; // Goes to matrix

@@ -95,7 +95,7 @@ void NetworkDisplay::Init() {
   displayConfig.singlePanelWidth = 64;
   displayConfig.singlePanelHeight = 64;
   displayConfig.totalPanelsWide = 5;
-  displayConfig.totalPanelsTall = 3;
+  displayConfig.totalPanelsTall = 4;
 
   displayConfig.outputScreenWidth = displayConfig.totalPanelsWide * displayConfig.singlePanelWidth;
   displayConfig.outputScreenHeight= displayConfig.totalPanelsTall * displayConfig.singlePanelHeight;
@@ -126,7 +126,7 @@ void NetworkDisplay::Init() {
     segmentConfig.singlePanelWidth = displayConfig.singlePanelWidth;
 
     segmentConfig.numPanelsWide = 1;
-    segmentConfig.numPanelsTall = 3;
+    segmentConfig.numPanelsTall = 4;
 
 
 #ifdef __USE_LOCAL_IP__
