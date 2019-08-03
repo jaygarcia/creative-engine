@@ -131,6 +131,7 @@ TBool DesktopControls::Poll()  {
       }
     }
 #endif
+    printf("key %i\n", e.key.keysym.scancode);
 
     // Keyboard
     if (e.type == SDL_KEYDOWN) {
