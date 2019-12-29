@@ -173,16 +173,22 @@ void handle_file(char *fn) {
     }
   }
 }
-
 TInt main(TInt ac, char *av[]) {
+
+#ifdef DEBUGGING
+  char *file = "Resources.r";
+  chdir("../../../src");
+  handle_file(file);
+#else
   if (ac < 2) {
     usage();
   }
-
   // process all files on command line
   for (TInt i = 1; i < ac; i++) {
     handle_file(av[i]);
   }
+#endif
+
 
   resourceFile.Finish();
 
