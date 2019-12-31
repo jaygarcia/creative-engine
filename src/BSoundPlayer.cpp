@@ -135,7 +135,7 @@ static void fillBuffer(void *audioBuffer, size_t length) {
 #ifndef __XTESNA__
 
   if (audio.IsMuted()) {
-    printf("audio is muted!\n");
+//    printf("audio is muted!\n");
     bzero(audioBuffer, length);
   }
 #endif

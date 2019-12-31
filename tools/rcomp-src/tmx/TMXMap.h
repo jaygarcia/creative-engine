@@ -9,7 +9,7 @@ class TMXLayer;
 
 class BObjectProgram;
 
-const TUint16 MAX_TILES = UINT16_MAX;
+const TUint16 MAX_TILES = 8196;
 
 class TMXMap {
 public:
