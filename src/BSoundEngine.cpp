@@ -190,7 +190,7 @@ TBool BSoundEngine::PlaySfx(TInt aSoundNumber, TInt8 aChannel) {
   return 0;
 #endif
   Mixer_Chunk  *chunk = mEffects[aSoundNumber];
-
+  Mixer_HaltChannel(aChannel);
   int result = Mixer_PlayChannel(aChannel, chunk, 0);
   if (result < 0) {
     printf("ERROR: %s\n", SDL_GetError());
